@@ -6,10 +6,10 @@
 
     You can handle all methods on a single end point
 ```python
-        @app.route('/hello', methods=['POST'])
-        @rpc_request
-        def func(method):
-            return 'Hello from '+method
+    @app.route('/hello', methods=['POST'])
+    @rpc_request
+    def func(method):
+        return 'Hello from '+method
 ```
 
     Or you can just listen on a specific method 
@@ -37,7 +37,7 @@ Also you are able to handle params from the JSON RPC 2.0 with or without a metho
 ```
 
 ### Classes
-
+The class bellow will listen on the methods hello, sum and error 
 ```python
     class MyHandler(RPCHandler):
 
@@ -49,4 +49,11 @@ Also you are able to handle params from the JSON RPC 2.0 with or without a metho
 
         def error(self):
             raise Exception('SOME ERROR')
+```
+
+After the class creation it is needed to be registered on some end point 
+
+```python
+    handler = MyHandler()
+    handler.register('/class', app)
 ```
