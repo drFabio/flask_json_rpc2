@@ -1,9 +1,9 @@
 from enum import Enum
-from flask import request
+from flask import request, current_app
 from flask import jsonify
 from functools import wraps
 import sys
-
+from bson.json_util import dumps
 
 
 class RPCHandler:
@@ -97,10 +97,12 @@ def _handle_request(func, defined_method=None):
             return _send_response(response)
     else:
         list_args = [sent_method] + list_args
-    try:
-        response = func(*list_args, **dict_args)
-    except BaseException as e:
-        return _handle_exception(e, data.get('id'))
+    # try:
+    response = func(*list_args, **dict_args)
+    # except BaseException as e:
+    #     print("FLASK JSON RPC EXCEPTION!")
+    #     print(e)
+    #     return _handle_exception(e, data.get('id'))
 
     return _send_response(_build_response(data['id'], response))
 
@@ -133,7 +135,7 @@ def _send_response(response):
     Returns:
         flask.Response : with status code 200 always
     """
-    resp = jsonify(response)
+    resp = current_app.response_class((dumps(response), '\n'),mimetype='application/json')
     resp.status_code = 200
     return resp
 
